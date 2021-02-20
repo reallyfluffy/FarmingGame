@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a33834ee0f2763c4882c1fdb1e438e04, type: 3}
+  m_Name: Flower
+  m_EditorClassIdentifier: 
+  m_itemType: 5
+  m_sprite: {fileID: 21300000, guid: f6504ba6c39bb4c4b8b3ea58957f4a83, type: 3}
+  m_itemVisualPrefab: {fileID: 1294403143688058, guid: 77148bdb1e04d2641809bb976037adc3,
+    type: 3}
+  m_value: 10
+  m_stackable: 1
+  m_sellable: 1
