@@ -4,12 +4,40 @@ using UnityEngine.UI;
 using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour {
+
+	public class InventoryItem
+	{
+		public int Quantity {get; private set;}
+		public ItemData ItemData {get; private set;}
+		public int InventorySlot {get; private set;}
+
+		public void AddItem(int _amount)
+		{
+			Quantity += _amount;
+		}
+
+		public void RemoveItem(int _amount)
+		{
+			Quantity -= _amount;
+		}
+
+		public InventoryItem(int _amount, ItemData _data)
+		{
+			Quantity = _amount;
+			ItemData = _data;
+		}
+
+		public void SetInventorySlot(int _index)
+		{
+			InventorySlot = _index;
+		}
+	}
 	
-	private List<Item> m_heldItems = new List<Item>();
+	private Dictionary<ItemDatabase.ItemType, InventoryItem> m_heldItems = new Dictionary<ItemDatabase.ItemType, InventoryItem>();
 	private int m_numItems;
 	private int m_coins;
 
-	public Item m_equippedItem { get; private set; }
+	public InventoryItem m_equippedItem { get; private set; }
 	public const int m_numItemSlots = 4;
 
 	public void Init ()
@@ -30,12 +58,10 @@ public class PlayerInventory : MonoBehaviour {
 		if (type == ItemDatabase.ItemType.Empty)
 			return;
 
-		int index = GetIndexForItemType(type);
-
-		if (index >= m_numItems || index == -1)
+		if (!m_heldItems.ContainsKey(type))
 			return;
 
-		Item selectedItem = m_heldItems[index];
+		InventoryItem selectedItem = m_heldItems[type];
 
 		if (m_equippedItem == selectedItem)
 			return;
@@ -51,54 +77,40 @@ public class PlayerInventory : MonoBehaviour {
 		if (m_equippedItem == null)
 			return;
 
-		m_equippedItem.Use(_hoveredTile);
-	}
-
-	private int GetIndexForItemType(ItemDatabase.ItemType type)
-	{
-		for(int i = 0; i < m_numItems; i++)
-		{
-			if (m_heldItems[i].ItemData.ItemType == type)
-				return i;
-		}
-
-		return -1;
+		m_equippedItem.ItemData.ItemBehaviour.Use(_hoveredTile);
 	}
 
 	public void AddItem(ItemDatabase.ItemType _type)
 	{
 		//do we already own at least one of this type?
-		foreach(Item heldItem in m_heldItems)
+		if(m_heldItems.TryGetValue(_type, out InventoryItem item))
 		{
-			if (heldItem.ItemData.ItemType == _type)
-			{
-				heldItem.AddNumHeld(1);
-				UIManager.m_Me.InventoryUI.AddItem(heldItem, 1);
-				return;
-			}
+			item.AddItem(1);
+			UIManager.m_Me.InventoryUI.AddItem(item, 1);
+			return;
 		}
 
-		Item item = Game.m_Me.ItemDataBase.CreateItemByType(_type);
-		item.AddNumHeld(1);
-		m_heldItems.Add(item);
-		UIManager.m_Me.InventoryUI.AddItem(item, 1);
+		item = new InventoryItem(1, Game.m_Me.ItemDataBase.GetItemByType(_type));
+		m_heldItems[_type] = item;
+		UIManager.m_Me.InventoryUI.AddItem(item, 1, true);
 		m_numItems++;
 	}
 
-	public void RemoveAllOfItem(Item item)
+	public void RemoveAllOfItem(InventoryItem item)
 	{
-		if (item.NumHeld == 0)
+		if (m_heldItems[item.ItemData.ItemType].Quantity == 0)
 			return;
 
-		m_heldItems.Remove(item);
-		UIManager.m_Me.InventoryUI.RemoveItem(item, item.NumHeld);
+		UIManager.m_Me.InventoryUI.RemoveItem(item, m_heldItems[item.ItemData.ItemType].Quantity);
+		m_heldItems.Remove(item.ItemData.ItemType);
+		
 		m_numItems--;
 
 		if (item.ItemData.ItemType == m_equippedItem.ItemData.ItemType)
 			m_equippedItem = null;
 	}
 	
-	public Item FindItemToSell()
+	public InventoryItem FindItemToSell()
 	{
 		if (m_equippedItem == null)
 			return null;
@@ -111,8 +123,17 @@ public class PlayerInventory : MonoBehaviour {
 
 	public void SellEquippedItem(int _totalPrice)
 	{
-		m_equippedItem.SellItem();
+		m_equippedItem.ItemData.ItemBehaviour.SellItem();
 		RemoveAllOfItem(m_equippedItem);
+	}
+
+	public int GetQuantity(ItemDatabase.ItemType _type)
+	{
+		if(m_heldItems.TryGetValue(_type, out InventoryItem item))
+		{
+			return item.Quantity;
+		}
+		return 0;
 	}
 
 }

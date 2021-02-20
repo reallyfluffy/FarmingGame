@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Scythe
   m_EditorClassIdentifier: 
   m_itemType: 3
+  m_itemBehaviour: {fileID: 11400000, guid: f15f965286f062d4f8c89a8e81c5bf35, type: 2}
   m_sprite: {fileID: 21300000, guid: 5622d00639dece2479eac71be15cce2c, type: 3}
-  m_itemVisualPrefab: {fileID: 0}
   m_value: 0
   m_stackable: 0
   m_sellable: 0

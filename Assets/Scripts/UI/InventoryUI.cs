@@ -13,7 +13,7 @@ public class InventoryUI : MonoBehaviour
 		m_itemSlots = GetComponentsInChildren<ItemSlot>();
 	}
 
-	public void UpdateEquippedItem(Item _tool)
+	public void UpdateEquippedItem(PlayerInventory.InventoryItem _tool)
 	{
 		//update the ui to show which tool has been equipped
 		m_equippedIndex = _tool.InventorySlot;
@@ -28,12 +28,9 @@ public class InventoryUI : MonoBehaviour
 		}
 	}
 
-	public void AddItem(Item _item, int _num)
+	public void AddItem(PlayerInventory.InventoryItem _item, int _num, bool _isNew = false)
 	{
-		ItemSlot slot = GetSlotForItem(_item);
-
-		if (slot == null)
-			slot = GetNextEmptySlotWithItem(_item);
+		ItemSlot slot = _isNew ? GetNextEmptySlotWithItem(_item) : GetSlotForItem(_item.ItemData.ItemType);
   
 		if (slot == null)
 			return;
@@ -44,7 +41,7 @@ public class InventoryUI : MonoBehaviour
 		slot.AddNumHeld(_num, _item.ItemData.IsStackable);
 	}
 
-	public void RemoveItem(Item _item, int _num)
+	public void RemoveItem(PlayerInventory.InventoryItem _item, int _num)
 	{
 		ItemSlot slot = m_itemSlots[_item.InventorySlot];
 
@@ -67,7 +64,7 @@ public class InventoryUI : MonoBehaviour
 		return ItemDatabase.ItemType.Empty;
 	}
 
-	private ItemSlot GetNextEmptySlotWithItem(Item _item)
+	private ItemSlot GetNextEmptySlotWithItem(PlayerInventory.InventoryItem _item)
 	{
 		ItemSlot pSlot;
 
@@ -85,14 +82,14 @@ public class InventoryUI : MonoBehaviour
 		return null;
 	}
 
-	private ItemSlot GetSlotForItem(Item _item)
+	private ItemSlot GetSlotForItem(ItemDatabase.ItemType _type)
 	{
 		foreach (ItemSlot pSlot in m_itemSlots)
 		{
 			if (pSlot.IsEmpty())
 				continue;
 
-			if (pSlot.ItemType == _item.ItemData.ItemType)
+			if (pSlot.ItemType == _type)
 				return pSlot;
 		}
 

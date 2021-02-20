@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScytheTool : Item
+[CreateAssetMenu(menuName = "ScriptableObjects/ScytheBehaviour")]
+public class ScytheTool : ItemBehaviour
 { 
-	public ScytheTool(ItemData _data) : base(_data)
-	{
- 
-	}
-
 	public override void Use(FloorTile _hoveredTile)
 	{
 		if (Game.m_Me.WorldManager.Grid.RemovePlantFromTile(_hoveredTile))

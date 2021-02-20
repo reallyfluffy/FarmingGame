@@ -17,14 +17,11 @@ public class ItemDatabase : ScriptableObject {
 
 	[SerializeField] private ItemData[] m_items = new ItemData[(int)ItemType.Last];
 
-	public Item CreateItemByType(ItemType nId)
+	public ItemData GetItemByType(ItemType nId)
 	{
 		if ((int)nId > m_items.Length)
 			return null;
-
-		//return a new instance of the required item
-		Item pNewItem = m_items[(int)nId - 1].CreateItem();
-		return pNewItem;
+		return m_items[(int)nId - 1];
 	}
 	
 }

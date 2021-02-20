@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Planter
   m_EditorClassIdentifier: 
   m_itemType: 2
+  m_itemBehaviour: {fileID: 11400000, guid: 043d157ce35779647936202d69ebd4db, type: 2}
   m_sprite: {fileID: 21300000, guid: 765cc2b401b6d2145a809a0a0f19d22e, type: 3}
-  m_itemVisualPrefab: {fileID: 0}
   m_value: 0
   m_stackable: 1
   m_sellable: 0

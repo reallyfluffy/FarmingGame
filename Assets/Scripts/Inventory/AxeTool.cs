@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AxeTool : Item
+[CreateAssetMenu(menuName = "ScriptableObjects/AxeBehaviour")]
+public class AxeTool : ItemBehaviour
 {	
-	public AxeTool(ItemData _data) : base(_data)
-	{
- 
-	}
-
 	public override void Use(FloorTile _hoveredTile)
 	{
 		Game.m_Me.WorldManager.Grid.ChopTreeOnTile(_hoveredTile);

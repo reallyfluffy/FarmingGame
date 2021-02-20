@@ -22,9 +22,13 @@ public class PlayerController : MonoBehaviour {
 		m_animator = GetComponentInChildren<Animator>();
 	}
 	
+	void FixedUpdate ()
+	{
+		UpdateKeyboardInput();	
+	}
+
 	void Update ()
 	{
-		UpdateKeyboardInput();
 		UpdateMouseInput(); 
 	}
 

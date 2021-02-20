@@ -23,12 +23,12 @@ public class Shop : TileObject {
 
 	private void SellItemForCoins()
 	{
-		Item item = Game.m_Me.Player.Inventory.FindItemToSell();
+		PlayerInventory.InventoryItem item = Game.m_Me.Player.Inventory.FindItemToSell();
 
 		if (item == null)
 			return;
 
-		int totalCoins = item.NumHeld * item.ItemData.Value;
+		int totalCoins = item.Quantity * item.ItemData.Value;
  
 		Game.m_Me.Player.Inventory.SellEquippedItem(totalCoins);
 		Game.m_Me.Player.UpdateCoins(totalCoins);

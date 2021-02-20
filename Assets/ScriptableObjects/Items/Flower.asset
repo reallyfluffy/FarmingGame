@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: Flower
   m_EditorClassIdentifier: 
   m_itemType: 5
+  m_itemBehaviour: {fileID: 11400000, guid: 602def18849dbe94dab1dd05b63f7e61, type: 2}
   m_sprite: {fileID: 21300000, guid: f6504ba6c39bb4c4b8b3ea58957f4a83, type: 3}
-  m_itemVisualPrefab: {fileID: 1294403143688058, guid: 77148bdb1e04d2641809bb976037adc3,
-    type: 3}
   m_value: 10
   m_stackable: 1
   m_sellable: 1
