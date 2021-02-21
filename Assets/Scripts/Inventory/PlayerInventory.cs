@@ -34,22 +34,20 @@ public class PlayerInventory : MonoBehaviour {
 	}
 	
 	private Dictionary<ItemDatabase.ItemType, InventoryItem> m_heldItems = new Dictionary<ItemDatabase.ItemType, InventoryItem>();
-	private int m_numItems;
 	private int m_coins;
 
-	public InventoryItem m_equippedItem { get; private set; }
+	public InventoryItem EquippedItem { get; private set; }
 	public const int m_numItemSlots = 4;
 
 	public void Init ()
 	{
-		m_equippedItem = null;
-		m_numItems = 0;
+		EquippedItem = null;
 
 		//player starts with tools
-		AddItem(ItemDatabase.ItemType.HoeTool);
-		AddItem(ItemDatabase.ItemType.PlanterTool);
-		AddItem(ItemDatabase.ItemType.ScytheTool);
-		AddItem(ItemDatabase.ItemType.AxeTool);
+		AddItem(ItemDatabase.ItemType.HoeTool, 1);
+		AddItem(ItemDatabase.ItemType.PlanterTool, 1);
+		AddItem(ItemDatabase.ItemType.ScytheTool, 1);
+		AddItem(ItemDatabase.ItemType.AxeTool, 1);
 	}
 
 	void Update()
@@ -63,68 +61,68 @@ public class PlayerInventory : MonoBehaviour {
 
 		InventoryItem selectedItem = m_heldItems[type];
 
-		if (m_equippedItem == selectedItem)
+		if (EquippedItem == selectedItem)
 			return;
 		if (selectedItem == null)
 			return;
 
-		m_equippedItem = selectedItem;
+		EquippedItem = selectedItem;
 		UIManager.m_Me.InventoryUI.UpdateEquippedItem(selectedItem);
 	}
 
 	public void UseTool(FloorTile _hoveredTile)
 	{
-		if (m_equippedItem == null)
+		if (EquippedItem == null)
 			return;
 
-		m_equippedItem.ItemData.ItemBehaviour.Use(_hoveredTile);
+		EquippedItem.ItemData.ItemBehaviour.Use(_hoveredTile);
 	}
 
-	public void AddItem(ItemDatabase.ItemType _type)
+	public void AddItem(ItemDatabase.ItemType _type, int _quantity)
 	{
 		//do we already own at least one of this type?
 		if(m_heldItems.TryGetValue(_type, out InventoryItem item))
 		{
-			item.AddItem(1);
-			UIManager.m_Me.InventoryUI.AddItem(item, 1);
+			item.AddItem(_quantity);
+			UIManager.m_Me.InventoryUI.AddItem(item, _quantity);
 			return;
 		}
 
-		item = new InventoryItem(1, Game.m_Me.ItemDataBase.GetItemByType(_type));
+		item = new InventoryItem(_quantity, Game.m_Me.ItemDataBase.GetItemByType(_type));
 		m_heldItems[_type] = item;
-		UIManager.m_Me.InventoryUI.AddItem(item, 1, true);
-		m_numItems++;
+		UIManager.m_Me.InventoryUI.AddItem(item, _quantity, true);
 	}
 
-	public void RemoveAllOfItem(InventoryItem item)
+	public void RemoveItem(InventoryItem _item, int _quantity)
 	{
-		if (m_heldItems[item.ItemData.ItemType].Quantity == 0)
+		if (!m_heldItems.ContainsKey(_item.ItemData.ItemType))
 			return;
 
-		UIManager.m_Me.InventoryUI.RemoveItem(item, m_heldItems[item.ItemData.ItemType].Quantity);
-		m_heldItems.Remove(item.ItemData.ItemType);
-		
-		m_numItems--;
+		UIManager.m_Me.InventoryUI.RemoveItem(_item, _quantity);
+		if(_item.Quantity == 0)
+		{
+			m_heldItems.Remove(_item.ItemData.ItemType);
 
-		if (item.ItemData.ItemType == m_equippedItem.ItemData.ItemType)
-			m_equippedItem = null;
+			if (_item.ItemData.ItemType == EquippedItem.ItemData.ItemType)
+				EquippedItem = null;
+		}
 	}
 	
 	public InventoryItem FindItemToSell()
 	{
-		if (m_equippedItem == null)
+		if (EquippedItem == null)
 			return null;
 
-		if (!m_equippedItem.ItemData.IsSellable)
+		if (!EquippedItem.ItemData.IsSellable)
 			return null;
 
-		return m_equippedItem;
+		return EquippedItem;
 	}
 
 	public void SellEquippedItem(int _totalPrice)
 	{
-		m_equippedItem.ItemData.ItemBehaviour.SellItem();
-		RemoveAllOfItem(m_equippedItem);
+		EquippedItem.ItemData.ItemBehaviour.SellItem();
+		RemoveItem(EquippedItem, EquippedItem.Quantity);
 	}
 
 	public int GetQuantity(ItemDatabase.ItemType _type)

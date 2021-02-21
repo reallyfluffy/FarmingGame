@@ -106,8 +106,7 @@ public class PlayerController : MonoBehaviour {
 		m_playerRigidBody.MovePosition(transform.position + m_movement);
 
 		m_rotation.Set(m_horizontalInput, 0.0f, m_verticalInput);
-		m_rotation = m_rotation.normalized;
-		Quaternion quat = Quaternion.LookRotation(m_rotation);
-		m_playerRigidBody.MoveRotation(quat);
+		m_rotation.Normalize();
+		m_playerRigidBody.MoveRotation(Quaternion.LookRotation(m_rotation));
 	}
 }
